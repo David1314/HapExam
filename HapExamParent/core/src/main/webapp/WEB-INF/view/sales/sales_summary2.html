@@ -1,0 +1,303 @@
+<#include "../include/head.html">
+<body style="padding: 10px;">
+	<form id="orderForm"></form>
+    <div id="orderGrid" style="margin: 0; padding: 0"></div>
+    <script type="text/javascript">
+    $(function() {
+    	debugger;
+        window['orderForm'] = $("#orderForm").ligerForm({
+            fields : [
+              {
+                display : '<@spring.message "hapExam.core.company.companyName"/>',
+                name : 'companyId',
+                type : 'popup',
+                width : 150,
+                textField:'companyName',
+                options:{
+                    readonly:false,//是否可编辑
+                    valueField : 'companyId',//选中的valueField
+                    textField : 'companyName',//选中的textField
+                    grid : {
+                    	columns : [ {
+                            display : '<@spring.message "hapExam.core.company.companyNumber"/>',
+                            name : "companyNumber",
+                            width : 120,
+                            type : "text"
+                        }, {
+                            display : '<@spring.message "hapExam.core.company.companyName"/>',
+                            name : "companyName",
+                            width : 120,
+                            type : "text"
+                        }],
+                        //数据查询的url
+                        url : '${base.contextPath}/core/companys/query'
+                    },
+                  //lov上的查询条件
+                    condition : {
+                        inputWidth : 150,
+                        labelWidth : 70,
+                        fields : [ {
+                            display : '<@spring.message "hapExam.core.company.companyNumber"/>',
+                            name : "companyNumber",
+                            newline : false,
+                            type : "text"
+                        }, {
+                            display : '<@spring.message "hapExam.core.company.companyName"/>',
+                            name : "companyName",
+                            newline : false,
+                            type : "text"
+                        } ]
+                    }
+                }
+            }
+              ,
+               {
+            	display : "<@spring.message "hapExam.core.customer.customerName"/>",
+                name : "customerId",//最终选中的值字段名
+                type : "popup",
+                newline : false,
+                textField:'customerName',
+                options:{
+                    readonly:false,//是否可编辑
+                    valueField : 'customerId',//选中的valueField
+                    textField : 'customerName',//选中的textField
+                    grid : {
+                        columns : [{
+                            display : "<@spring.message "hapExam.core.customer.customerNumber"/>",
+                            name : "customerNumber",
+                            width : 150,
+                            type : "text",
+                            align : "left"
+                        },
+                        {
+                            display : "<@spring.message "hapExam.core.customer.customerName"/>",
+                            name : "customerName",
+                            width : 150,
+                            type : "text",
+                            align : "left"
+                        }],
+                        //数据查询的url
+                        url : '${base.contextPath}/core/customers/query'
+                    },
+                    triggerToLoad: true,//注意
+                    onBeforeOpen: function() {
+                       //这里设置查询参数
+                       this.setParm('companyId', liger.get('companyId').getValue());
+                       this.triggerLoaded = false;//注意
+                   },
+                 //lov上的查询条件
+                   condition : {
+                       inputWidth : 150,
+                       labelWidth : 70,
+                       fields : [ {
+                           display : '<@spring.message "hapExam.core.customer.customerNumber"/>',
+                           name : "customerNumber",
+                           newline : false,
+                           type : "text"
+                       }, {
+                           display : '<@spring.message "hapExam.core.customer.customerName"/>',
+                           name : "customerName",
+                           newline : false,
+                           type : "text"
+                       } ]
+                   }
+                }
+            },{
+                type : 'text',
+                label : '<@spring.message "hapExam.core.orderHeaders.orderNumber"/>',
+                name : 'orderNumber',
+                newline : false,
+                width: 120
+            } ],
+            
+            
+            buttons : [ {
+                text : '<@spring.message "hap.query"/>',
+                disabled : false,
+                width : 60,
+                click : function() {
+                    Hap.gridQuery({
+                        form : orderForm,
+                        grid : orderGrid
+                    })
+                }
+            },{
+            	text:'重置',
+            	disabled : false,
+            	width:60,
+            	click:function(){
+            		/* openUpload(); */
+            	}
+            },{
+            	text:'导出Excel',
+            	disabled : false,
+            	width:60,
+            	click:function(){
+            		/* openDownload(); */
+            	}
+            }]
+        });
+
+     /*    window['orderGrid'] = $("#orderGrid").ligerGrid({
+            unSetValidateAttr : false,
+            columns : [ {
+                display : '<@spring.message "hbi.core.fruit.fruitId"/>',
+                name : 'fruitId',
+                align : 'left',
+                width : 120
+            },{
+                display : '<@spring.message "hbi.core.fruit.fruitCode"/>',
+                name : 'fruitCode',
+                align : 'left',
+                width : 120,
+                editor : {
+                    type : 'text'
+                }, 
+                validate: {
+                    required: true
+                }
+            },{
+                display : '<@spring.message "hbi.core.fruit.fruitName"/>',
+                name : 'fruitName',
+                align : 'left',
+                width : 120,
+                editor : {
+                    type : 'text'
+                },
+                validate: {
+                    required: true
+                }
+            }, {
+                display : '<@spring.message "hbi.core.fruit.fruitDescription"/>',
+                name : 'fruitDescription',
+                align : 'left',
+                width : 150,
+                editor : {
+                	  type : 'tl',
+                      idField:'fruitId',
+                      dto:'hbi.core.fruit.dto.Fruit'
+                }
+            },{
+                display : 'lov',
+                name : 'fruitId',
+                width : 150,
+                //很重要，否则无法显示选中的描述
+                textField:'fruitDescription',
+                editor : {
+                    type : 'popup',
+                    valueField : 'fruitId',//lov的valueField
+                    textField : 'fruitDescription',//lov的textField
+                    grid : {
+                        columns : [ {
+                            display : '<@spring.message "hbi.core.fruit.fruitId"/>',
+                            name : "fruitId",
+                            width : 120,
+                            type : "int"
+                        }, {
+                            display : '<@spring.message "hbi.core.fruit.fruitCode"/>',
+                            name : "fruitCode",
+                            width : 120,
+                            type : "text"
+                        }, {
+                            display : "<@spring.message "hbi.core.fruit.fruitName"/>",
+                            name : "fruitName",
+                            width : 120,
+                            type : "text"
+                        }, {
+                            display : "<@spring.message "hbi.core.fruit.fruitDescription"/>",
+                            name : "fruitDescription",
+                            width : 120,
+                            type : "text"
+                        } ],
+                        url : '${base.contextPath}/core/fruit/query'
+                    },
+                    //lov上的查询条件
+                    condition : {
+                        inputWidth : 150,
+                        labelWidth : 70,
+                        fields : [ {
+                            display : '<@spring.message "hbi.core.fruit.fruitName"/>',
+                            name : "fruitName",
+                            newline : false,
+                            type : "text"
+                        }, {
+                            display : '<@spring.message "hbi.core.fruit.fruitDescription"/>',
+                            name : "fruitDescription",
+                            newline : false,
+                            type : "text"
+                        } ]
+                    }
+                }
+            },{
+            	display: '<@spring.message "user.startActiveDate"/>',
+                name   : 'startActiveDate',
+                align  : 'center',
+                width  : 120,
+                type:'date',
+                format : "yyyy-MM-dd",
+                editor : {
+                    type: 'date'
+            }
+            }],
+            url : '${base.contextPath}/core/fruit/query',
+            toolbar : {
+                items : [ {
+                    text : '<@spring.message "hap.new"/>',
+                    disable : false,
+                    click : function() {
+                        fruitGrid.addRow({})
+                    },
+                    icon : 'add'
+                }, {
+                    line : true
+                }, {
+                    text : '<@spring.message "hap.delete"/>',
+                    click : function() {
+                	    Hap.gridDelete({
+                            grid : fruitGrid,
+                            url : '${base.contextPath}/core/fruit/submit'
+                        }) 
+                    	fruitGrid.deleteSelectedRow();
+                    },
+                    icon : 'delete'
+                }, {
+                    line : true
+                }, {
+                    text : '<@spring.message "hap.save"/>',
+                    click : function() {
+                        Hap.gridSave({
+                            grid : fruitGrid,
+                            url : '${base.contextPath}/core/fruit/submit'
+                        })
+                    },
+                    icon : 'save'
+                } ]
+            },
+            enabledEdit : true,
+            width : '99%',
+            height : '98%',
+            checkbox : true
+        });*/
+    }); 
+    
+    /*  var openUpload = function(){
+    	 $.ligerDialog.open({
+    		 url : '${base.contextPath}/fruit/fruit_file_upload.html',
+    		 height:510,
+    		 width:700,
+    		 isResize: true
+    	 });
+     }
+     
+     var openDownload = function(){
+    	 $.ligerDialog.open({
+    		 url : '${base.contextPath}/fruit/fruit_file_manage.html',
+    		 height:510,
+    		 width:700,
+    		 isResize: true
+    	 });
+     } */
+    </script>
+    
+</body>
+</html>

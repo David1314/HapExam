@@ -1,0 +1,488 @@
+<#include "../include/head.html">
+<body style="padding: 10px;">
+	<form id="detailsForm"></form>
+    <div id="detailsGrid" class="liger-tab">
+    	<div tabid="job_cron_addtab" title="<@spring.message "hap.mostly"/>" lselected="true">
+       	 	<div id="detailsGrid1" style="margin: 0; padding: 0"></div>
+    	</div>
+    	<div tabid="job_cron_notification" title="<@spring.message "hap.others"/>" lselected="true">
+       		 <div id="detailsGrid2" style="margin: 0; padding: 0"></div>
+   	    </div>
+    </div>
+    <script type="text/javascript">
+    $(function(){
+    	debugger;
+        window['detailsForm'] = $("#detailsForm").ligerForm({
+            fields : [{
+                type : 'text',
+                label : '<@spring.message "hapExam.core.orderHeaders.orderNumber"/>',
+                name : 'orderNumber',
+                newline : false,
+                width: 100,
+                validate: {
+                    required: true
+                }
+            },{
+            	display : '<@spring.message "hapExam.core.companys.companyName"/>',
+                name : "companyId",//最终选中的值字段名
+                type : "popup",
+                newline : false,
+                width: 100,
+                textField:'companyName',
+                validate: {
+                    required: true
+                },
+                options:{
+                    readonly:false,//是否可编辑
+                    valueField : 'companyId',//选中的valueField
+                    textField : 'companyName',//选中的textField
+                    grid : {
+                        columns : [{
+                            display : '<@spring.message "hapExam.core.companys.companyNumber"/>',
+                            name : "companyNumber",
+                            width : 150,
+                            type : "text",
+                            align : "left"
+                        },
+                        {
+                            display : '<@spring.message "hapExam.core.companys.companyName"/>',
+                            name : "companyName",
+                            width : 150,
+                            type : "text",
+                            align : "left"
+                        }],
+                        //数据查询的url
+                        url : '${base.contextPath}/core/companys/query'
+                    },
+                    condition : {
+                        inputWidth : 150,
+                        labelWidth : 70,
+                        fields : [ {
+                            display : '<@spring.message "hapExam.core.companys.companyNumber"/>',
+                            name : "companyNumber",
+                            newline : true,
+                            type : "text"
+                        }, {
+                            display : '<@spring.message "hapExam.core.companys.companyName"/>',
+                            name : "companyName",
+                            newline : false,
+                            type : "text"
+                        } ]
+                    }
+                   
+                }
+            },{
+                display: '<@spring.message "hapExam.core.customers.customerName"/>',
+                name: "customerId",
+                type: "popup",
+                textField: 'customerName',
+                newline : false,
+                width: 100,
+                validate: {
+                    required: true
+                },
+                options:{
+                    readonly:false,//是否可编辑
+                    valueField : 'customerId',//选中的valueField
+                    textField : 'customerName',//选中的textField
+                    grid : {
+                        columns : [{
+                            display : '<@spring.message "hapExam.core.customers.customerNumber"/>',
+                            name : "customerNumber",
+                            width : 150,
+                            type : "text",
+                            align : "left"
+                        },
+                        {
+                            display : '<@spring.message "hapExam.core.customers.customerName"/>',
+                            name : "customerName",
+                            width : 150,
+                            type : "text",
+                            align : "left"
+                        }],
+                        //数据查询的url
+                        url : '${base.contextPath}/core/customers/query',
+                        onLoadData: function(){
+                          if($.ligerui.get('companyId').getValue()!=null){
+                        	  this.setParm('companyId', $.ligerui.get('companyId').getValue());
+                         }
+                        }
+                    },
+                    condition : {
+                        inputWidth : 150,
+                        labelWidth : 70,
+                        fields : [ {
+                            display : '<@spring.message "hapExam.core.customers.customerNumber"/>',
+                            name : "customerNumber",
+                            newline : true,
+                            type : "text"
+                        }, {
+                            display : '<@spring.message "hapExam.core.customers.customerName"/>',
+                            name : "customerName",
+                            newline : false,
+                            type : "text"
+                        } ]
+                    }
+                   
+                }
+            },{
+              	 display: '<@spring.message "hapExam.core.orderHeaders.orderDate"/>',
+                 name   : 'orderDate',
+                 align  : 'center',
+                 newline : true,
+                 width  : 100,
+                 validate: {
+                     required: true
+                 },
+                 type:'date',
+    	         format : "yyyy-MM-dd",
+                 editor : {
+                     type: 'date'
+                 }
+            },{
+            	display : '<@spring.message "hapExam.core.orderHeaders.orderTotal"/>',
+            	name : 'orderTotal',
+                type : 'text',
+                newline : false,
+                width: 100,
+                validate: {
+                    required: true
+                }
+            },
+            {
+                type : 'text',
+                label : '<@spring.message "hapExam.core.orderHeaders.orderStatus"/>',
+                name : 'orderStatus',
+                newline : false,
+                width: 100,
+            }],
+            buttons : [{
+                text : "<@spring.message "hap.save"/>",
+                disabled : false,
+                width : 60,
+                click : function(){
+                	 Hap.formSave({
+                        form : detailsForm,
+                        url : '${base.contextPath}/core/orderHeader/submit'
+                    }) 
+                }
+            },{
+                text : "<@spring.message "hap.submit"/>",
+                disabled : false,
+                width : 60,
+                click : function() {
+                }
+            },{
+                text : "<@spring.message "hap.approve"/>",
+                disabled : false,
+                width : 60,
+                click : function() {
+                    
+                }
+            },{
+                text : "<@spring.message "hap.refuse"/>",
+                disabled : false,
+                width : 60,
+                click : function() {
+                }
+            },{
+                text :"<@spring.message "hap.deleteOrder"/>",
+                disabled : false,
+                width : 60,
+                click : function() {
+                }
+            },{
+                text :"<@spring.message "hap.print"/>",
+                disabled : false,
+                width : 60,
+                click : function() {    
+                }
+            },{
+                text :"<@spring.message "hap.return"/>",
+                disabled : false,
+                width : 60,
+                click : function() {
+                   }
+            }]
+        });
+
+        window['detailsGrid1'] = $("#detailsGrid1").ligerGrid({
+            unSetValidateAttr : false,
+            columns : [  {
+                display : "<@spring.message "hapExam.core.orderLines.lineNumber"/>",
+                name : 'lineNumber',
+                align : 'left',
+                width : 120
+            },  {
+            	display : "<@spring.message "hapExam.core.orderHeaders.orderNumber"/>",
+            	name : 'headerId',//最终选中的值字段名
+                textField:'orderNumber',
+                editor : {
+                	type : 'popup',
+                    readonly:false,//是否可编辑
+                    valueField : 'headerId',//选中的valueField
+                    textField : 'orderNumber',//选中的textField
+                    grid : {
+                    	columns : [ {
+                            display : '<@spring.message "hapExam.core.orderHeaders.headerId"/>',
+                            name : 'headerId',
+                            align : 'left',
+                            width : 120
+                        },{
+                            display : '<@spring.message "hapExam.core.orderHeaders.orderNumber"/>',
+                            name : 'orderNumber',
+                            align : 'left',
+                            width : 120
+                        }],
+                        //数据查询的url
+                        url : '${base.contextPath}/core/orderHeader/query' 
+                    },
+                    //lov上的查询条件
+                    condition : {
+                        inputWidth : 150,
+                        labelWidth : 70,
+                        fields : [ {
+                        	display : '<@spring.message "hapExam.core.orderHeaders.headerId"/>',
+                            name : 'headerId',
+                            newline : true
+                        },{
+                        	display : '<@spring.message "hapExam.core.orderHeaders.orderNumber"/>',
+                            name : 'orderNumber',
+                            newline : true,
+                            type : "text"
+                        }]
+                    }
+                }
+            },{
+            	display : '<@spring.message "hapExam.core.inventoryItems.itemCode"/>',
+                name : 'inventoryItemId',//最终选中的值字段名
+                textField:'itemCode',
+                editor : {
+                	type : 'popup',
+                    readonly:false,//是否可编辑
+                    valueField : 'inventoryItemId',//选中的valueField
+                    textField : 'itemCode',//选中的textField
+                    grid : {
+                    	columns : [ {
+                            display : '<@spring.message "hapExam.core.inventoryItems.inventoryItemId"/>',
+                            name : 'inventoryItemId',
+                            align : 'left',
+                            width : 120
+                        },{
+                            display : '<@spring.message "hapExam.core.inventoryItems.itemCode"/>',
+                            name : 'itemCode',
+                            align : 'left',
+                            width : 120
+                        },{
+                            display : '<@spring.message "hapExam.core.inventoryItems.itemDescription"/>',
+                            name : 'itemDescription',
+                            align : 'left',
+                            width : 120,
+                        }],
+                        //数据查询的url
+                        url : '${base.contextPath}/core/inventoryItems/query' 
+                    },
+                    //lov上的查询条件
+                    condition : {
+                        inputWidth : 150,
+                        labelWidth : 70,
+                        fields : [ {
+                            display : '<@spring.message "hapExam.core.inventoryItems.inventoryItemId"/>',
+                            name : 'inventoryItemId',
+                            newline : true
+                        },{
+                            display : '<@spring.message "hapExam.core.inventoryItems.itemCode"/>',
+                            name : "itemCode",
+                            newline : true,
+                            type : "text"
+                        }, {
+                            display : '<@spring.message "hapExam.core.inventoryItems.itemDescription"/>',
+                            name : "itemDescription",
+                            newline : true,
+                            type : "text"
+                        } ]
+                    }
+                },
+                validate: {
+                    required: true
+                }
+            }, {
+                display : '<@spring.message "hapExam.core.inventoryItems.itemDescription"/>',
+                name : 'itemDescription',
+                align : 'left',
+                width : 120,
+                type : 'text'
+            }, {
+                display :'<@spring.message "hapExam.core.orderLines.orderQuantityUom"/>',
+                name : 'orderQuantityUom',
+                align : 'left',
+                width : 120,
+                type : 'text'
+            }, {
+                display : '<@spring.message "hapExam.core.orderLines.orderQuantity"/>',
+                name : 'orderQuantity',
+                align : 'left',
+                width : 120,
+                editor : {
+                    type : 'int'
+                },
+                validate: {
+                    required: true
+                }
+            }, {
+                display : '<@spring.message "hapExam.core.orderLines.unitSellingPrice"/>',
+                name : 'unitSellingPrice',
+                align : 'left',
+                width : 120,
+                editor : {
+                    type : 'int'
+                },
+                validate: {
+                    required: true
+                }
+            }, {
+                display : "<@spring.message "hapExam.core.orderLines.sum"/>",
+                name : 'sum',
+                align : 'left',
+                width : 150,
+                type : 'int'
+            },{
+                display : "<@spring.message "hapExam.core.orderLines.description"/>",
+                name : 'description',
+                align : 'left',
+                width : 150,
+                editor : {
+                    type : 'text'
+                },
+                validate: {
+                    required: true
+                }
+                
+            }],
+            /* url : '${base.contextPath}/core/fruit/query', */
+            toolbar : {
+                items : [ {
+                    text : '<@spring.message "hap.new"/>',
+                    disable : false,
+                    click : function() {
+                    	detailsGrid1.addRow({})
+                    },
+                    icon : 'add'
+                }, {
+                    line : true
+                }, {
+                    text : '<@spring.message "hap.delete"/>',
+                    click : function() {
+                        /* Hap.gridDelete({
+                            grid : fruitGrid,
+                            url : '${base.contextPath}/sys/student/delete'
+                        }) */
+                    	/* fruitGrid.deleteSelectedRow(); */
+                    },
+                    icon : 'delete'
+                }, {
+                    line : true
+                }, {
+                    text : '<@spring.message "hap.save"/>',
+                    click : function() {
+                        Hap.gridSave({
+                            grid : detailsGrid1,
+                            url : '${base.contextPath}/core/orderLines/submit'
+                        })
+                    },
+                    icon : 'save'
+                }]
+            },
+            enabledEdit : true,
+            width : '99%',
+            height : '98%',
+            checkbox : true
+        });
+        
+        
+        window['detailsGrid2'] = $("#detailsGrid2").ligerGrid({
+            unSetValidateAttr : false,
+            columns : [  {
+                display : "<@spring.message "hapExam.core.orderLines.lineNumber"/>",
+                name : 'lineNumber',
+                align : 'left',
+                width : 120
+            }, {
+            	display : '<@spring.message "hapExam.core.orderLines.addition1"/>',
+                name : 'addition1',//最终选中的值字段名
+                align : 'left',
+                width : 120,
+                editor : {
+                    type : 'text'
+                }
+            }, {
+            	display : '<@spring.message "hapExam.core.orderLines.addition2"/>',
+                name : 'addition2',//最终选中的值字段名
+                align : 'left',
+                width : 120,
+                editor : {
+                    type : 'text'
+                }
+            }, {
+            	display : '<@spring.message "hapExam.core.orderLines.addition3"/>',
+                name : 'addition3',//最终选中的值字段名
+                align : 'left',
+                width : 120,
+                editor : {
+                    type : 'text'
+                }
+            }, {
+            	display : '<@spring.message "hapExam.core.orderLines.addition4"/>',
+                name : 'addition4',//最终选中的值字段名
+                align : 'left',
+                width : 120,
+                editor : {
+                    type : 'text'
+                }
+            }],
+            /* url : '${base.contextPath}/core/fruit/query', */
+            toolbar : {
+                items : [ {
+                    text : '<@spring.message "hap.new"/>',
+                    disable : false,
+                    click : function() {
+                    	detailsGrid2.addRow({})
+                    },
+                    icon : 'add'
+                }, {
+                    line : true
+                }, {
+                    text : '<@spring.message "hap.delete"/>',
+                    click : function() {
+                        /* Hap.gridDelete({
+                            grid : fruitGrid,
+                            url : '${base.contextPath}/sys/student/delete'
+                        }) */
+                    	/* fruitGrid.deleteSelectedRow(); */
+                    },
+                    icon : 'delete'
+                }, {
+                    line : true
+                }, {
+                    text : '<@spring.message "hap.save"/>',
+                    click : function() {
+                        Hap.gridSave({
+                            grid : detailsGrid2,
+                            url : '${base.contextPath}/core/orderLines/submit'
+                        })
+                    },
+                    icon : 'save'
+                }]
+            },
+            enabledEdit : true,
+            width : '99%',
+            height : '98%',
+            checkbox : true
+        });
+        
+        
+    });
+    
+    </script>
+</body>
+</html>

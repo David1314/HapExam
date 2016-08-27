@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="hapExam.core.sales.mapper.InventoryItemsMapper">
+    <resultMap id="InventoryItemsResultMap" type="hapExam.core.sales.dto.InventoryItems" extends="com.hand.hap.mapper.StdMapper.STD">
+        <result column="INVENTORY_ITEM_ID" property="inventoryItemId" jdbcType="DECIMAL"/>
+        <result column="ITEM_CODE" property="itemCode" jdbcType="VARCHAR"/>
+        <result column="ITEM_UOM" property="itemUom" jdbcType="VARCHAR"/>
+        <result column="ITEM_DESCRIPTION" property="itemDescription" jdbcType="VARCHAR"/>
+        <result column="ORDER_FLAG" property="orderFlag" jdbcType="VARCHAR"/>
+    </resultMap>
+    
+    <select id="selectByInventoryItemId" parameterType="java.lang.Long" resultType="java.lang.String">
+    	select ITEM_UOM from hap_inv_inventory_items where INVENTORY_ITEM_ID = #{id}
+    </select>
+    
+    <select id="selectByInventoryItems" parameterType="hapExam.core.sales.dto.InventoryItems" resultMap="InventoryItemsResultMap">
+		SELECT ivt.INVENTORY_ITEM_ID,
+		       ivt.ITEM_CODE,
+		       ivt.ITEM_UOM,
+		       ivt.ITEM_DESCRIPTION,
+		       ivt.ORDER_FLAG
+		  FROM hap_inv_inventory_items ivt
+		<where>
+        	<if test="inventoryItemId != null">
+                and ivt.INVENTORY_ITEM_ID = #{inventoryItemId,jdbcType=DECIMAL}
+            </if>
+            <if test="itemCode != null">
+                AND ivt.ITEM_CODE like #{itemCode,jdbcType=VARCHAR}
+            </if>
+            <if test="itemUom != null">
+                AND ivt.ITEM_UOM like #{itemUom,jdbcType=VARCHAR}
+            </if>
+            <if test="itemDescription != null">
+                AND ivt.ITEM_DESCRIPTION like #{itemDescription,jdbcType=VARCHAR}
+            </if>
+            <if test="orderFlag != null">
+                AND ivt.ORDER_FLAG like #{orderFlag,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+    
+</mapper>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="hapExam.core.sales.mapper.OrderVoMapper">
+    <resultMap id="OrderVoResultMap" type="hapExam.core.sales.dto.OrderVo" extends="com.hand.hap.mapper.StdMapper.STD">
+        <result column="CUSTOMER_ID" property="customerId" jdbcType="DECIMAL"/>
+        <result column="COMPANY_ID" property="companyId" jdbcType="DECIMAL"/>
+        <result column="ORDER_NUMBER" property="orderNumber" jdbcType="VARCHAR"/>
+        <result column="INVENTORY_ITEM_ID" property="inventoryItemId" jdbcType="DECIMAL"/>
+        <result column="ORDER_STATUS" property="orderStatus" jdbcType="VARCHAR"/>
+        <result column="HEADER_ID" property="headerId" jdbcType="DECIMAL"/>
+        <result column="COMPANY_NAME" property="companyName" jdbcType="VARCHAR"/>
+        <result column="CUSTOMER_NAME" property="customerName" jdbcType="VARCHAR"/>
+        <result column="ORDER_DATE" property="orderDate" jdbcType="DATE"/>
+        <result column="sum" property="orderTotal" jdbcType="DECIMAL"/>
+    </resultMap>
+    
+    <select id="selectByOrderVo" parameterType="hapExam.core.sales.dto.OrderVo" resultMap="OrderVoResultMap">
+		SELECT  distinct
+			    head.HEADER_ID,
+			    head.ORDER_NUMBER,
+			    company.COMPANY_NAME,
+			    customer.CUSTOMER_NAME,
+			    head.ORDER_DATE,
+			    head.ORDER_STATUS,
+			    hs.sum
+				FROM
+				    hap_om_order_headers head,
+				    hap_org_companys company,
+				    hap_ar_customers customer,
+				    hap_inv_inventory_items items,
+    				hap_om_order_lines line,
+				    (SELECT 
+				        HEADER_ID,
+				            sum(IFNULL((ORDERD_QUANTITY * UNIT_SELLING_PRICE), 0)) sum
+				    FROM
+				        hap_om_order_lines
+				    GROUP BY HEADER_ID) hs
+		<where>
+        	<if test="companyId != null">
+                and company.COMPANY_ID = #{companyId,jdbcType=DECIMAL}
+            </if>
+            <if test="customerId != null">
+                AND customer.CUSTOMER_ID = #{customerId,jdbcType=DECIMAL}
+            </if>
+            <if test="orderNumber != null">
+                AND head.ORDER_NUMBER like #{orderNumber,jdbcType=VARCHAR}
+            </if>
+             <if test="inventoryItemId != null">
+                AND items.INVENTORY_ITEM_ID = #{inventoryItemId,jdbcType=DECIMAL}
+            </if>
+            <if test="orderStatus != null">
+                AND head.ORDER_STATUS like #{orderStatus,jdbcType=VARCHAR}
+            </if>
+             	and head.company_id = company.company_id
+		        AND head.CUSTOMER_ID = customer.CUSTOMER_ID
+		        AND head.HEADER_ID = hs.HEADER_ID
+		        and head.header_id = line.header_id 
+		        and items.INVENTORY_ITEM_ID = line.INVENTORY_ITEM_ID
+        </where>
+    </select>
+    
+</mapper>

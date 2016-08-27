@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="hapExam.core.sales.mapper.OrderHeadersMapper">
+    <resultMap id="OrderHeadersResultMap" type="hapExam.core.sales.dto.OrderHeaders" extends="com.hand.hap.mapper.StdMapper.STD">
+        <result column="HEADER_ID" property="headerId" jdbcType="DECIMAL"/>
+        <result column="ORDER_NUMBER" property="orderNumber" jdbcType="VARCHAR"/>
+        <result column="COMPANY_ID" property="companyId" jdbcType="DECIMAL"/>
+        <result column="ORDER_DATE" property="orderDate" jdbcType="DATE"/>
+        <result column="ORDER_STATUS" property="orderStatus" jdbcType="VARCHAR"/>
+        <result column="CUSTOMER_ID" property="customerId" jdbcType="DECIMAL"/>
+    </resultMap>
+    
+    <select id="selectHeaderCount" resultType="java.lang.Long">
+    	SELECT max(header_id) FROM hap_om_order_headers; 
+    </select>
+    
+    <select id="selectByHeaderId" parameterType="java.lang.Long" resultType="java.lang.Long">
+    	select COMPANY_ID from hap_om_order_headers 
+    	where HEADER_ID = #{headerId}
+    </select>
+    
+    <select id="selectOrderStatus" resultMap="OrderHeadersResultMap">
+    	select distinct ORDER_STATUS from hap_om_order_headers 
+    </select>
+    
+    <select id="selectByOrderHeaders" parameterType="hapExam.core.sales.dto.OrderHeaders" resultMap="OrderHeadersResultMap">
+		SELECT orh.HEADER_ID,
+		       orh.ORDER_NUMBER,
+		       orh.COMPANY_ID,
+		       orh.ORDER_DATE,
+		       orh.ORDER_STATUS,
+		       orh.CUSTOMER_ID
+		  FROM hap_om_order_headers orh
+		<where>
+        	<if test="headerId != null">
+                and orh.HEADER_ID = #{headerId,jdbcType=DECIMAL}
+            </if>
+            <if test="orderNumber != null">
+                AND orh.ORDER_NUMBER like #{orderNumber,jdbcType=VARCHAR}
+            </if>
+            <if test="companyId != null">
+                AND orh.COMPANY_ID = #{companyId,jdbcType=DECIMAL}
+            </if>
+            <if test="orderDate != null">
+                AND orh.ORDER_DATE = #{orderDate,jdbcType=DATE}
+            </if>
+            <if test="orderStatus != null">
+                AND orh.ORDER_STATUS like #{orderStatus,jdbcType=VARCHAR}
+            </if>
+            <if test="customerId != null">
+                AND orh.CUSTOMER_ID = #{customerId,jdbcType=DECIMAL}
+            </if>
+        </where>
+    </select>
+    
+    <insert id="insertOrderHeaders" parameterType="hapExam.core.sales.dto.OrderHeaders" >
+    <!-- <selectKey resultType="Long" keyProperty="fruitId"
+        order="BEFORE">
+        select
+        fruit_b_s.nextVal
+        from dual
+    </selectKey> -->
+    INSERT INTO hap_om_order_headers
+	    <trim prefix="(" suffix=")" suffixOverrides="," >
+	    
+	    	<if test="headerId != null">
+                HEADER_ID,
+            </if>
+            <if test="orderNumber != null">
+                ORDER_NUMBER,
+            </if>
+            <if test="companyId != null">
+                COMPANY_ID,
+            </if>
+            <if test="orderDate != null">
+                ORDER_DATE,
+            </if>
+            <if test="orderStatus != null">
+                ORDER_STATUS,
+            </if>
+            <if test="customerId != null">
+                CUSTOMER_ID,
+            </if>
+	    </trim>
+	    
+	    <trim prefix="values (" suffix=")" suffixOverrides="," >
+	      <if test="headerId != null">
+                #{headerId,jdbcType=DECIMAL},
+            </if>
+            <if test="orderNumber != null">
+                #{orderNumber,jdbcType=VARCHAR},
+            </if>
+            <if test="companyId != null">
+                #{companyId,jdbcType=DECIMAL},
+            </if>
+            <if test="orderDate != null">
+                #{orderDate,jdbcType=DATE},
+            </if>
+            <if test="orderStatus != null">
+                #{orderStatus,jdbcType=VARCHAR},
+            </if>
+            <if test="customerId != null">
+                #{customerId,jdbcType=VARCHAR},
+            </if>
+	    </trim>
+  </insert>
+    
+    <update id="updateOrderHeaders" parameterType="hapExam.core.sales.dto.OrderHeaders" >
+    update hap_om_order_headers
+    <set >
+            <if test="orderNumber != null">
+                ORDER_NUMBER = #{orderNumber,jdbcType=VARCHAR},
+            </if>
+            <if test="companyId != null">
+                COMPANY_ID = #{companyId,jdbcType=DECIMAL},
+            </if>
+            <if test="orderDate != null">
+                ORDER_DATE = #{orderDate,jdbcType=DATE},
+            </if>
+            <if test="orderStatus != null">
+                ORDER_STATUS = #{orderStatus,jdbcType=VARCHAR},
+            </if>
+            <if test="customerId != null">
+                CUSTOMER_ID = #{customerId,jdbcType=DECIMAL},
+            </if>
+    </set>
+    	where HEADER_ID = #{headerId,jdbcType=DECIMAL}
+  </update>
+  
+  <delete id="deleteOrderHeaders" parameterType="hapExam.core.sales.dto.OrderHeaders" >
+    delete from hap_om_order_headers 
+    where HEADER_ID = #{headerId} <!-- jdbcType=DECIMAL -->
+  </delete>
+    
+</mapper>
