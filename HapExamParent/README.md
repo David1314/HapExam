@@ -1,4 +1,11 @@
 ﻿
+数据库为Mysql，后台数据库所使用的表在名为'hap_dev'的数据库中。
+
+订单汇总页面为sales/sales_summary.html,详细页面为sales/sales_details.html
+
+url地址为：localhost:8080/core
+
+
 已实现功能：
 
 1.订单汇总页面的查询。
